@@ -68,33 +68,33 @@ myPack :: (Eq a) => [a] -> [[a]]
 myPack []  = []
 myPack [x] = [[x]]
 myPack  xs = [fst spanned_list] ++ myPack (snd spanned_list) 
-			    where 
-				spanned_list = span (==(head xs)) xs
+                where 
+                spanned_list = span (==(head xs)) xs
 
 --[x] Problem 10: Encode the run-length of consecutive duplicates in a list.
 
 myRunLength :: (Eq a) => [a] -> Maybe [(a, Int)]
 myRunLength [] = Nothing
 myRunLength xs = fmap tupler packed_list
-				 	where 
-					tupler = map (\ys -> (head ys, myLength ys))
-					packed_list = Just (myPack xs) 
+                    where 
+                    tupler = map (\ys -> (head ys, myLength ys))
+                    packed_list = Just (myPack xs) 
 
 --[x] Problem 11: Modify the result of problem 10 to send only non-singular elements as tuples, and singular elements as themselves. 
  
 data CompressedString a = Single a
-					    | Multiple Int a
-						deriving (Show, Eq)
+                        | Multiple Int a
+                        deriving (Show, Eq)
 
 
 myModifiedRunLength :: (Eq a) => [a] -> Maybe [CompressedString a]
 myModifiedRunLength [] = Nothing
 myModifiedRunLength xs = fmap encoder packed_list
-							where
-							encoder = map (\ys -> if (myLength ys == 1) 
-														then Single (head ys) 
-														else Multiple (myLength ys) (head ys))
-							packed_list = Just (myPack xs)
+                            where
+                            encoder = map (\ys -> if (myLength ys == 1) 
+                                                    then Single (head ys) 
+                                                    else Multiple (myLength ys) (head ys))
+                            packed_list = Just (myPack xs)
 
 --[] Problem 12: 
 
