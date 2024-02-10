@@ -165,15 +165,20 @@ myDrop   xs n
     | otherwise = let (ys,zs) = splitAt (n-1) xs 
                    in  ys ++ (myDrop (tail zs) n) 
                      
---[ ] Problem 17: Split a list into two parts, with the length of the first part being given.
+--[x] Problem 17: Split a list into two parts, with the length of the first part being given.
 
 mySplit :: [a] -> Int -> ([a],[a])
-mySplit    [ ]  _ = ([ ],[ ])
-mySplit     xs  0 = ([ ], xs)
-mySplit  (x:xs) 1 = ([x], xs) --versus (head xs, tail xs), which is faster?
-mySplit     xs  n
-    | n < 0 = error "negative input to mySplit."
-    | n > myLength xs = (xs, [ ]) --should I throw an error here?
+mySplit       [ ]   _ = ([ ],[ ])
+mySplit        xs   0 = ([ ], xs)
+mySplit     (x:xs)  1 = ([x], xs) --versus (head xs, tail xs), which is faster?
+mySplit  ys@(x:xs)  n
+    | n  < 0 = error "negative input to mySplit."
+    | n  > myLength ys = error "too large of an input to mySplit."
+    | n == myLength ys = (ys, [ ]) --equivalent to 'swap mySplit xs 0'.
+    --this could be tidied up with a 'take' function that takes from the end of a list.
+    --other methods could probably be used, as well. 
+    | otherwise = ([x]++(fst (mySplit xs (n-1))), 
+                   myReverse' (take ((myLength ys)-n) (myReverse' xs [ ])) [ ])
 
 --curried solution
 --mySplit :: Int -> [a] -> ([a],[a])
@@ -181,9 +186,22 @@ mySplit     xs  n
 --mySplit 1 = 
 --mySplit n = 
 
---[ ] Problem 18:
+--[x] Problem 18: Slice a list. Given two indices, i and k, the slice is the list containing the elements 
+--between the i'th and k'th element of the original list (both limits included). Start counting the elements 
+--with 1. 
 
---[ ] Problem 19:
+--this solution feels incomplete, and the error cases need to be given more depth.
+mySlice :: [a] -> Int -> Int -> [a]
+mySlice  _ 0 0 = error "invalid input to mySlice."
+mySlice xs i k 
+    | i < 0 = error "invalid input to mySlice."
+    | k < 0 = error "invalid input to mySlice." 
+    | i > k = error "invalid input to mySlice."
+    | i > myLength xs = error "invalid input to mySlice."
+    | k > myLength xs = error "invalid input to mySlice."
+    | otherwise = map ($ xs) (map myElementAt [i..k])
+
+--[ ] Problem 19: 
 
 --[ ] Problem 20:
 
