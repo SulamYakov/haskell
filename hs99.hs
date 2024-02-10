@@ -103,7 +103,7 @@ auxDecoder (Single x) = [x]
 auxDecoder (Multiple n x) = take n (repeat x)
 
 myDecompressor :: (Eq a) => [CompressedString a] -> [a]
-myDecompressor = map decoder   
+myDecompressor = foldr (++) [ ] . map auxDecoder
 
 --[x] Problem 13: Implement run-length data encoding directly, without packing consecutive elements into sublists.
 
@@ -149,21 +149,37 @@ myReplicator n
     | otherwise = (foldl (++) [ ]) . (map auxDecoder) . foldr (auxAccruer n) [ ]
 --need tail recursive solution replacing '++'
 
---[ ] Problem 16: Drop every nth element from a list.
+--[x] Problem 16: Drop every nth element from a list.
 --create two implementations - one that fails when given negative integers, and one that implements negative integers by swapping endianess.
 --this would mean dropping every nth element from the right when given -n as the second argument.
 
 --somehow, I think this function could be tidied up with some monadic logic.
---myDrop :: (Eq a) => [a] -> Int -> [a]
---myDrop  [ ] _ = [ ]
---myDrop   xs 0 = xs
---myDrop    _ 1 = [ ]
---myDrop   xs n 
---    | n < 0 = error "negative input to myDrop."
---    | n > myLength xs = error "input overflow to myDrop."
---    | otherwise =  
+myDrop :: (Eq a) => [a] -> Int -> [a]
+myDrop  [ ] _ = [ ]
+myDrop   xs 0 = xs
+myDrop    _ 1 = [ ]
+myDrop   xs n 
+    | n <  0 = error "negative input to myDrop."
+    | n >  myLength xs = xs
+    | n == myLength xs = init xs
+    | otherwise = let (ys,zs) = splitAt (n-1) xs 
+                   in  ys ++ (myDrop (tail zs) n) 
+                     
+--[ ] Problem 17: Split a list into two parts, with the length of the first part being given.
 
---[ ] Problem 17:
+mySplit :: [a] -> Int -> ([a],[a])
+mySplit    [ ]  _ = ([ ],[ ])
+mySplit     xs  0 = ([ ], xs)
+mySplit  (x:xs) 1 = ([x], xs) --versus (head xs, tail xs), which is faster?
+mySplit     xs  n
+    | n < 0 = error "negative input to mySplit."
+    | n > myLength xs = (xs, [ ]) --should I throw an error here?
+
+--curried solution
+--mySplit :: Int -> [a] -> ([a],[a])
+--mySplit 0 = 
+--mySplit 1 = 
+--mySplit n = 
 
 --[ ] Problem 18:
 
