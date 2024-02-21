@@ -98,11 +98,11 @@ myModifiedRunLength = encoder . myPack
 --                program the (one-way) inverse function of myModifiedRunLength.
 
 --decode each member of the received list to be mapped over.
-auxDecoder :: (Eq a) => CompressedString a -> [a]
+auxDecoder :: CompressedString a -> [a]
 auxDecoder (Single x) = [x]
 auxDecoder (Multiple n x) = take n (repeat x)
 
-myDecompressor :: (Eq a) => [CompressedString a] -> [a]
+myDecompressor :: [CompressedString a] -> [a]
 myDecompressor = foldr (++) [ ] . map auxDecoder
 
 --[x] Problem 13: Implement run-length data encoding directly, without packing consecutive elements into sublists.
@@ -154,7 +154,7 @@ myReplicator n
 --this would mean dropping every nth element from the right when given -n as the second argument.
 
 --somehow, I think this function could be tidied up with some monadic logic.
-myDrop :: (Eq a) => [a] -> Int -> [a]
+myDrop :: [a] -> Int -> [a]
 myDrop  [ ] _ = [ ]
 myDrop   xs 0 = xs
 myDrop    _ 1 = [ ]
@@ -165,9 +165,10 @@ myDrop   xs n
     | otherwise = let (ys,zs) = splitAt (n-1) xs 
                    in  ys ++ (myDrop (tail zs) n) 
                      
---[x] Problem 17: Split a list into two parts, with the length of the first part being given.
+--[ ] Problem 17: Split a list into two parts, with the length of the first part being given.
 
-mySplit :: (Eq a) => [a] -> Int -> ([a], [a])
+--this still doesn't work... moving on using splitAt, but will come back to this.
+mySplit :: [a] -> Int -> ([a], [a])
 mySplit       [ ]   _  = ([ ], [ ])
 mySplit        xs   0  = ([ ],  xs)
 mySplit        xs (-1) = ( init  xs , [last xs])
@@ -198,7 +199,7 @@ mySplit        xs   n
 
 --this solution feels incomplete, and the error cases need to be given more depth.
 --also, this needs negative index functionality.
-mySlice :: (Eq a) => [a] -> Int -> Int -> [a]
+mySlice :: [a] -> Int -> Int -> [a]
 mySlice  _ 0 0 = error "invalid input to mySlice."
 mySlice xs i k 
     | i < 0 = error "invalid input to mySlice."
@@ -210,16 +211,16 @@ mySlice xs i k
 
 --[x] Problem 19: Rotate a list about a pivot N.
 
-myRotate :: (Eq a) => [a] -> Int -> [a]
+myRotate :: [a] -> Int -> [a]
 myRotate xs n = snd (mySplit xs n) ++ fst (mySplit xs n)
 
 --curried solution
 --myRotate' :: Int -> [a] -> [a]
 --myRotate' n = 
 
---[x] Problem 20: Remove the n'th element from a list.
+--[x] Problem 20: Remove the N'th element from a list.
 
---needs to be extended to allow negative functionality.
+--needs to be extended to allow negative index functionality.
 myRemoveAt :: [a] -> Int -> [a]
 myRemoveAt  [ ] _ = [ ]
 myRemoveAt   xs 0 = xs
@@ -228,10 +229,16 @@ myRemoveAt   xs n
     | n <  0 = error "negative input to myRemoveAt."
     | n >  myLength xs = xs --feels like bad functionality.. error should be thrown here.
     | n == myLength xs = init xs
-    | otherwise = ys ++ tail zs 
-                    where (ys,zs) = splitAt (n-1) xs                  
+    | otherwise = let (ys,zs) = splitAt (n-1) xs 
+                   in  ys ++ tail zs                 
+--note that this is just 'myDrop' without the recursive call.
 
---[ ] Problem 21: 
+--[ ] Problem 21: Insert an element at a given position N into a list.
+
+--needs to be extended to allow negative index functionality.
+myInsertAt :: a -> [a] -> Int -> [a]
+myInsertAt x xs n = let (ys, zs) = mySplit xs n
+                     in  ys ++ [x] ++ zs
 
 --[ ] Problem 22:
 
