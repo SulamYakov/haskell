@@ -167,7 +167,7 @@ myDrop   xs n
                      
 --[x] Problem 17: Split a list into two parts, with the length of the first part being given.
 
-mySplit :: [a] -> Int -> ([a], [a])
+mySplit :: (Eq a) => [a] -> Int -> ([a], [a])
 mySplit       [ ]   _  = ([ ], [ ])
 mySplit        xs   0  = ([ ],  xs)
 mySplit        xs (-1) = ( init  xs , [last xs])
@@ -186,18 +186,19 @@ mySplit        xs   n
 --other methods could probably be used, as well. 
 
 --curried solution
---mySplit :: Int -> [a] -> ([a], [a])
---mySplit   0  = 
---mySplit (-1) =
---mySplit   1  = 
---mySplit   n  = 
+--mySplit' :: Int -> [a] -> ([a], [a])
+--mySplit'   0  = 
+--mySplit' (-1) =
+--mySplit'   1  = 
+--mySplit'   n  = 
 
 --[x] Problem 18: Slice a list. Given two indices, i and k, the slice is the list containing the elements 
 --between the i'th and k'th element of the original list (both limits included). Start counting the elements 
 --with 1. 
 
 --this solution feels incomplete, and the error cases need to be given more depth.
-mySlice :: [a] -> Int -> Int -> [a]
+--also, this needs negative index functionality.
+mySlice :: (Eq a) => [a] -> Int -> Int -> [a]
 mySlice  _ 0 0 = error "invalid input to mySlice."
 mySlice xs i k 
     | i < 0 = error "invalid input to mySlice."
@@ -209,17 +210,28 @@ mySlice xs i k
 
 --[x] Problem 19: Rotate a list about a pivot N.
 
-myRotate :: [a] -> Int -> [a]
+myRotate :: (Eq a) => [a] -> Int -> [a]
 myRotate xs n = snd (mySplit xs n) ++ fst (mySplit xs n)
 
 --curried solution
---myRotate :: Int -> [a] -> [a]
---myRotate 0 = id
---myRotate n = 
+--myRotate' :: Int -> [a] -> [a]
+--myRotate' n = 
 
---[ ] Problem 20:
+--[x] Problem 20: Remove the n'th element from a list.
 
---[ ] Problem 21:
+--needs to be extended to allow negative functionality.
+myRemoveAt :: [a] -> Int -> [a]
+myRemoveAt  [ ] _ = [ ]
+myRemoveAt   xs 0 = xs
+myRemoveAt   xs 1 = tail xs
+myRemoveAt   xs n 
+    | n <  0 = error "negative input to myRemoveAt."
+    | n >  myLength xs = xs --feels like bad functionality.. error should be thrown here.
+    | n == myLength xs = init xs
+    | otherwise = ys ++ tail zs 
+                    where (ys,zs) = splitAt (n-1) xs                  
+
+--[ ] Problem 21: 
 
 --[ ] Problem 22:
 
