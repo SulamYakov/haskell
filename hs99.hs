@@ -211,8 +211,8 @@ mySlice xs i k
 
 --[x] Problem 19: Rotate a list about a pivot N.
 
-myRotate :: [a] -> Int -> [a]
-myRotate xs n = snd (mySplit xs n) ++ fst (mySplit xs n)
+myRotate :: Int -> [a] -> [a]
+myRotate n xs = snd (splitAt n xs) ++ fst (splitAt n xs)
 
 --curried solution
 --myRotate' :: Int -> [a] -> [a]
@@ -233,11 +233,11 @@ myRemoveAt   xs n
                    in  ys ++ tail zs                 
 --note that this is just 'myDrop' without the recursive call.
 
---[ ] Problem 21: Insert an element at a given position N into a list.
+--[x] Problem 21: Insert an element at a given position N into a list.
 
 --needs to be extended to allow negative index functionality.
 myInsertAt :: a -> [a] -> Int -> [a]
-myInsertAt x xs n = let (ys, zs) = mySplit xs n
+myInsertAt x xs n = let (ys, zs) = splitAt n xs
                      in  ys ++ [x] ++ zs
 
 --[ ] Problem 22:
