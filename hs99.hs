@@ -167,24 +167,30 @@ myDrop   xs n
                      
 --[x] Problem 17: Split a list into two parts, with the length of the first part being given.
 
-mySplit :: [a] -> Int -> ([a],[a])
-mySplit       [ ]   _ = ([ ],[ ])
-mySplit        xs   0 = ([ ], xs)
-mySplit     (x:xs)  1 = ([x], xs) --versus (head xs, tail xs), which is faster?
-mySplit  ys@(x:xs)  n
-    | n  < 0 = error "negative input to mySplit."
-    | n  > myLength ys = error "too large of an input to mySplit."
-    | n == myLength ys = (ys, [ ]) --equivalent to 'swap mySplit xs 0'.
-    --this could be tidied up with a 'take' function that takes from the end of a list.
-    --other methods could probably be used, as well. 
-    | otherwise = ([x]++(fst (mySplit xs (n-1))), 
-                   myReverse' (take ((myLength ys)-n) (myReverse' xs [ ])) [ ])
+mySplit :: [a] -> Int -> ([a], [a])
+mySplit       [ ]   _  = ([ ], [ ])
+mySplit        xs   0  = ([ ],  xs)
+mySplit        xs (-1) = ( init  xs , [last xs])
+mySplit        xs   1  = ([head  xs],  tail xs ) --versus (x:xs) 1 = ([x], xs), which is faster?
+mySplit        xs   n
+    |   n   > myLength xs = error "too large of an input to mySplit."
+    | (-n)  > myLength xs = error "too small of an input to mySplit."
+    |   n  == myLength xs = (xs , [ ]) --equivalent to 'swap mySplit xs 0'.
+    | (-n) == myLength xs = ([ ],  xs)
+    |   n   < 0 = (take ((myLength xs)+n) xs,
+                   myReverse' (take (-n) (myReverse' xs [ ])) [ ])
+    |   n   > 0 = (take ((myLength xs)-n) xs, 
+                   myReverse' (take ((myLength xs)-n) (myReverse' xs [ ])) [ ])
+
+--this could be tidied up with a 'take' function that takes from the end of a list.
+--other methods could probably be used, as well. 
 
 --curried solution
---mySplit :: Int -> [a] -> ([a],[a])
---mySplit 0 = 
---mySplit 1 = 
---mySplit n = 
+--mySplit :: Int -> [a] -> ([a], [a])
+--mySplit   0  = 
+--mySplit (-1) =
+--mySplit   1  = 
+--mySplit   n  = 
 
 --[x] Problem 18: Slice a list. Given two indices, i and k, the slice is the list containing the elements 
 --between the i'th and k'th element of the original list (both limits included). Start counting the elements 
@@ -199,9 +205,17 @@ mySlice xs i k
     | i > k = error "invalid input to mySlice."
     | i > myLength xs = error "invalid input to mySlice."
     | k > myLength xs = error "invalid input to mySlice."
-    | otherwise = map ($ xs) (map myElementAt [i..k])
+    | otherwise = map (($ xs) . myElementAt) [i..k]
 
---[ ] Problem 19: 
+--[x] Problem 19: Rotate a list about a pivot N.
+
+myRotate :: [a] -> Int -> [a]
+myRotate xs n = snd (mySplit xs n) ++ fst (mySplit xs n)
+
+--curried solution
+--myRotate :: Int -> [a] -> [a]
+--myRotate 0 = id
+--myRotate n = 
 
 --[ ] Problem 20:
 
